@@ -9,7 +9,7 @@ class PokemonRow extends React.Component {
 
     return (
       <tr>
-        <td>{pokemon.fr}</td>
+        <td>{pokemon[this.props.lang]}</td>
         <img src={pokemon.image} />
       </tr>
     );
@@ -45,7 +45,7 @@ class PokemonTable extends React.Component {
       // if (inStockOnly && !pokemon.stocked) {
       //   return;
       // }
-      rows.push(<PokemonRow pokemon={pokemon} key={pokemon.id} />);
+      rows.push(<PokemonRow pokemon={pokemon} lang={this.props.lang} key={pokemon.id} />);
     });
 
     return (
@@ -66,15 +66,11 @@ class SearchBar extends React.Component {
   constructor(props) {
     super(props);
     this.handleFilterTextChange = this.handleFilterTextChange.bind(this);
-    this.handleLangChange = this.handleLangChange.bind(this);
+    // this.handleLangChange = this.handleLangChange.bind(this);
   }
 
   handleFilterTextChange(e) {
     this.props.onFilterTextChange(e.target.value);
-  }
-
-  handleLangChange(e) {
-    this.props.onLangChange(e.target.checked);
   }
 
   render() {
@@ -87,9 +83,17 @@ class SearchBar extends React.Component {
           onChange={this.handleFilterTextChange}
         />
         <p>
-          <input type="checkbox" checked={this.props.fr} /> Français
-          <input type="checkbox" checked={this.props.en} /> English
-          <input type="checkbox" checked={this.props.de} /> Deutch
+          <input type="radio" id="contactChoice1"
+           name="contact" onChange={this.props.onLangChange} value="fr" checked={this.props.lang=='fr'}/>
+          <label for="contactChoice1">Français</label>
+
+          <input type="radio" id="contactChoice2"
+           name="contact" onChange={this.props.onLangChange} value="en" checked={this.props.lang=='en'}/>
+          <label for="contactChoice2">English</label>
+
+          <input type="radio" id="contactChoice3"
+           name="contact" onChange={this.props.onLangChange} value="de" checked={this.props.lang=='de'}/>
+          <label for="contactChoice3">Deutch</label>
         </p>
       </form>
     );
@@ -101,7 +105,7 @@ class FilterablePokemonTable extends React.Component {
     super(props);
     this.state = {
       filterText: "",
-      lang: ""
+      lang: "fr"
     };
 
     this.handleFilterTextChange = this.handleFilterTextChange.bind(this);
@@ -114,9 +118,10 @@ class FilterablePokemonTable extends React.Component {
     });
   }
 
-  handleLang(lang) {
+  handleLang(event) {
+    console.log('suce', this)
     this.setState({
-      lang: lang
+      lang: event.target.value
     });
   }
 
@@ -126,11 +131,13 @@ class FilterablePokemonTable extends React.Component {
         <SearchBar
           filterText={this.state.filterText}
           onFilterTextChange={this.handleFilterTextChange}
-          onLangChange={this.handleLang}
+          lang={this.state.lang}
+          onLangChange={this.handleLang.bind(this)}
         />
         <PokemonTable
           pokemons={this.props.pokemons}
           filterText={this.state.filterText}
+          lang={this.state.lang}
         />
       </div>
     );
